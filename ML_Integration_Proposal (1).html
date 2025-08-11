@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный отчет: Идеи по внедрению ML</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6; /* gray-100 */
+        }
+        .chart-container {
+            position: relative;
+            height: 45vh;
+            max-height: 450px;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+            transform: translateX(4px);
+        }
+        @media (max-width: 767px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    
+    <div class="min-h-screen flex flex-col md:flex-row">
+        <!-- Sticky Sidebar Navigation -->
+        <aside class="w-64 bg-white shadow-md p-4 sticky top-0 h-screen overflow-y-auto hidden md:block">
+            <h1 class="text-xl font-bold text-gray-900 mb-6">ML Идеи</h1>
+            <nav id="sidebar-nav" class="flex flex-col space-y-2">
+                <!-- Navigation links will be injected by JS -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 sm:p-6 md:p-10">
+            <header class="mb-10 text-center">
+                <h1 class="text-4xl font-bold text-gray-900">Интерактивный отчет по внедрению ML</h1>
+                <p class="mt-2 text-lg text-gray-600">Анализ и визуализация идей для улучшения трафика, удержания и монетизации.</p>
+            </header>
+
+            <div id="content-container" class="flex flex-col space-y-12">
+                <!-- Content sections will be injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Data for the report sections
+        const reportData = [
+            {
+                id: 'fraud-detection',
+                title: '1. Выявление фрода',
+                intro: 'Этот раздел посвящен автоматическому обнаружению подозрительных установок и аномалий в качестве трафика. Система на основе ML помогает выявлять ботов, клик-фермы и резкие падения метрик, экономя бюджет и обеспечивая чистоту данных.',
+                idea: 'Система автоматически обнаруживает подозрительные установки и аномалии в качестве трафика (боты, клик-фермы, резкие падения метрик).',
+                howItWorks: 'Собираются девайсные метаданные, гео, источник и данные о первой сессии. ML-модели и правила выявляют аномалии, такие как одинаковые IP, короткие сессии или резкое падение Retention. При обнаружении система автоматически блокирует фрод и уведомляет маркетинг.',
+                value: 'Экономия бюджета, чистая аналитика для точного расчета ROI и защита репутации приложения.',
+                chartType: 'bar',
+                chartData: {
+                    labels: ['Первая сессия (сек)', 'События', 'LTV (7д)'],
+                    datasets: [
+                        {
+                            label: 'Фрод',
+                            data: [6, 0, 0],
+                            backgroundColor: '#EF4444',
+                            borderColor: '#DC2626',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Одобрен',
+                            data: [310, 15, 12.5],
+                            backgroundColor: '#22C55E',
+                            borderColor: '#16A34A',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                chartOptions: {
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            },
+            {
+                id: 'hidden-sources',
+                title: '2. Скрыто ценные источники',
+                intro: 'Не все ценные пользователи платят сразу. Этот анализ помогает определить источники, которые приносят отложенную прибыль через 7-30 дней, что позволяет оптимизировать бюджет и не отключать перспективные, но "медленные" каналы.',
+                idea: 'Определение источников, которые приносят отложенную прибыль — пользователи платят не сразу, а через 7–30 дней.',
+                howItWorks: 'Анализируется поведение пользователей в первые дни. На основе данных о сессиях и прогрессе пользователи делятся на когорты с быстрыми и отложенными платежами. ML-модель прогнозирует отложенный LTV для каждого источника.',
+                value: 'Увеличение дохода за счёт удержания долгосрочных игроков и оптимизация бюджета с учётом отложенных конверсий.',
+                chartType: 'bar',
+                chartData: {
+                    labels: ['AdNetwork_X', 'ASA (US)', 'AdNetwork_Z'],
+                    datasets: [
+                        {
+                            label: 'ROI D1',
+                            data: [-92.0, 35.0, -80.0],
+                            backgroundColor: '#F97316',
+                        },
+                        {
+                            label: 'ROI D30',
+                            data: [58.0, 102.0, -72.0],
+                            backgroundColor: '#3B82F6',
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'delayed-ltv',
+                title: '3. Источники с отложенной ценностью',
+                intro: 'Некоторые каналы показывают низкую эффективность в первые дни, но выходят в плюс через несколько недель. Визуализация кривых LTV помогает увидеть этот потенциал и принять верное решение о распределении бюджета.',
+                idea: 'Обнаружение источников, приносящих доход спустя 2–6 недель, несмотря на низкие показатели в первые дни.',
+                howItWorks: 'Отслеживается динамика LTV, ARPU, retention и время до первой покупки. Моделирование кривых роста LTV позволяет спрогнозировать момент выхода на положительный ROI для каждого источника.',
+                value: 'Сохранение и усиление долгосрочно прибыльных каналов, а также более эффективное распределение рекламного бюджета.',
+                chartType: 'line',
+                chartData: {
+                    labels: ['D1', 'D7', 'D30', 'D60'],
+                    datasets: [
+                        {
+                            label: 'Facebook Ads GEO A',
+                            data: [0.15, 0.40, 1.20, 3.50],
+                            borderColor: '#3B82F6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Google UAC GEO C',
+                            data: [0.10, 0.25, 1.00, 4.20],
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'empty-partners',
+                title: '4. Выявление пустых партнеров',
+                intro: 'Этот инструмент помогает идентифицировать и автоматически отключать партнеров, поставляющих некачественный трафик без активности и платежей. Анализ вовлеченности позволяет быстро отсеять неэффективные каналы.',
+                idea: 'Определение партнёров с некачественными установками (без активности и платежей) и автоматическое отключение.',
+                howItWorks: 'Рассчитывается Engagement Score на основе конверсий, длительности сессий, покупок и retention. Партнеры с низким скором автоматически помечаются как неэффективные или фродовые.',
+                value: 'Снижение расходов на неэффективную рекламу, повышение общего ROI и активная борьба с фродом.',
+                chartType: 'bubble',
+                chartData: {
+                    datasets: [
+                        {
+                            label: 'Partner A (Фрод)',
+                            data: [{ x: 1.2, y: 0.01, r: 2 }],
+                            backgroundColor: '#EF4444'
+                        },
+                        {
+                            label: 'Partner D (Одобрен)',
+                            data: [{ x: 15.0, y: 0.50, r: 50 }],
+                            backgroundColor: '#22C55E'
+                        }
+                    ]
+                },
+                chartOptions: {
+                    scales: {
+                        x: { title: { display: true, text: 'D1 Retention (%)' } },
+                        y: { title: { display: true, text: 'D1 Purchases (%)' } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: (Retention: ${context.raw.x}%, Покупки: ${context.raw.y}%, Вовлеченность: ${context.raw.r})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                id: 'churn-prediction',
+                title: '5. Предсказание выгорания',
+                intro: 'Прогнозирование ухода пользователей — ключ к их удержанию. ML-модель анализирует поведение и определяет, когда пользователь может потерять интерес, давая возможность вовремя предложить ему персональную акцию или бонус.',
+                idea: 'ML-модель прогнозирует, когда пользователь потеряет интерес, чтобы вовремя направить персональные акции.',
+                howItWorks: 'Анализируются сессии, прогресс, повторяемость действий и время между сессиями. Модель вычисляет риск ухода и предполагаемое время, когда это может произойти, позволяя принять превентивные меры.',
+                value: 'Повышение удержания, продление жизненного цикла пользователя в приложении и, как следствие, увеличение дохода.',
+                chartType: 'diagram',
+                diagramHTML: `
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 text-center">
+                        <div class="p-4 bg-white rounded-lg shadow-md w-full md:w-1/4">
+                            <h3 class="font-semibold">1. Сбор данных</h3>
+                            <p class="text-sm text-gray-600">Сессии, прогресс, действия</p>
+                        </div>
+                        <div class="text-2xl text-gray-400 font-light">→</div>
+                        <div class="p-4 bg-white rounded-lg shadow-md w-full md:w-1/4">
+                            <h3 class="font-semibold">2. ML Модель</h3>
+                            <p class="text-sm text-gray-600">Анализ и прогноз риска ухода</p>
+                        </div>
+                        <div class="text-2xl text-gray-400 font-light">→</div>
+                        <div class="p-4 bg-white rounded-lg shadow-md w-full md:w-1/4">
+                            <h3 class="font-semibold">3. Реакция</h3>
+                            <p class="text-sm text-gray-600">Персональные акции и бонусы</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 'player-dna',
+                title: '6. ДНК игрока',
+                intro: 'Создание динамического профиля для каждого пользователя позволяет глубоко персонализировать игровой опыт. Разделяя игроков на типы (казуальные, хардкорные, донатеры), можно предлагать им наиболее релевантный контент и акции.',
+                idea: 'Создание уникального динамического профиля каждого пользователя на основе его поведения для персонализации опыта.',
+                howItWorks: 'Собираются данные о сессиях, покупках и социальных взаимодействиях. Пользователи кластеризуются по типам поведения. Профиль обновляется в реальном времени для максимальной релевантности предложений.',
+                value: 'Увеличение удержания и монетизации за счет глубокой персонализации, улучшение UX и повышение лояльности.',
+                chartType: 'radar',
+                chartData: {
+                    labels: ['Средняя сессия', 'Покупки', 'Прогресс', 'Соц. активность'],
+                    datasets: [{
+                        label: 'Казуал',
+                        data: [3, 2, 4, 2],
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3B82F6',
+                        pointBackgroundColor: '#3B82F6'
+                    }, {
+                        label: 'Хардкорный игрок',
+                        data: [9, 6, 9, 7],
+                        fill: true,
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        borderColor: '#EF4444',
+                        pointBackgroundColor: '#EF4444'
+                    }]
+                }
+            },
+            {
+                id: 'traffic-quality-map',
+                title: '7. Карта качества трафика',
+                intro: 'Визуальная карта качества трафика помогает быстро оценить эффективность каналов в разрезе стран и устройств. Это мощный инструмент для оперативного принятия решений и оптимизации маркетинговых кампаний.',
+                idea: 'Визуализация и аналитика качества трафика по каналам, гео и устройствам для оперативной оптимизации.',
+                howItWorks: 'Собираются метрики ROI, LTV, Retention. ML-модель кластеризует данные и выделяет сегменты с разными показателями, которые отображаются на дашборде в виде тепловой карты.',
+                value: 'Быстрое выявление слабых и сильных зон, экономия бюджета и улучшение общей эффективности маркетинга.',
+                chartType: 'bar',
+                 chartData: {
+                    labels: ['Facebook Ads', 'Google UAC', 'ASA'],
+                    datasets: [
+                        {
+                            label: 'Высокое качество',
+                            data: [4.5, 0, 6.0],
+                            backgroundColor: '#22C55E',
+                        },
+                        {
+                            label: 'Низкое качество',
+                            data: [0, 0.8, 0],
+                            backgroundColor: '#EF4444',
+                        }
+                    ]
+                },
+                chartOptions: {
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, title: { display: true, text: 'LTV 30д ($)' } }
+                    }
+                }
+            },
+            {
+                id: 'retention-pattern',
+                title: '8. Долгосрочный Retention',
+                intro: 'Краткосрочные метрики могут быть обманчивы. Анализ долгосрочного удержания позволяет выявить источники, которые приводят наиболее лояльных пользователей, и строить стратегию закупок на основе устойчивых трендов.',
+                idea: 'Анализ и классификация источников по их долгосрочным показателям удержания.',
+                howItWorks: 'Собираются данные Retention D1, D7, D14, D30+. ML-модель выявляет паттерны удержания и формирует рейтинг источников, на основе которого даются рекомендации по перераспределению бюджета.',
+                value: 'Фокус на долгосрочную прибыль, снижение риска отключения перспективных источников и оптимизация бюджета под устойчивый рост.',
+                chartType: 'line',
+                chartData: {
+                    labels: ['D1', 'D7', 'D14', 'D30'],
+                    datasets: [
+                        {
+                            label: 'AdNetwork_X (Высокий)',
+                            data: [30, 25, 22, 15],
+                            borderColor: '#3B82F6',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'AdNetwork_Y (Средний)',
+                            data: [25, 18, 10, 5],
+                            borderColor: '#F97316',
+                            tension: 0.1
+                        },
+                         {
+                            label: 'Органика (Отличный)',
+                            data: [40, 35, 32, 25],
+                            borderColor: '#10B981',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                chartOptions: {
+                    scales: {
+                        y: { title: { display: true, text: 'Retention (%)' } }
+                    }
+                }
+            },
+            {
+                id: 'whale-prediction',
+                title: '9. Предсказание VIP-игроков',
+                intro: 'Раннее выявление пользователей с высоким потенциалом платежей ("китов") позволяет сфокусировать на них маркетинговые усилия. Это прямо влияет на доход и помогает создать особые условия для самых ценных игроков.',
+                idea: 'Использование ML для раннего выявления пользователей с высоким потенциалом платежей (Whale Prediction).',
+                howItWorks: 'Анализируются первые сессии, прогресс и социальные взаимодействия. Модель, обученная на исторических данных, в реальном времени выделяет пользователей с высоким шансом стать VIP.',
+                value: 'Увеличение дохода за счет удержания VIP-игроков, оптимизация маркетинга и улучшение UX для ключевой аудитории.',
+                chartType: 'doughnut',
+                chartData: {
+                    labels: ['VIP-игроки', 'Потенциальные платящие', 'Остальные пользователи'],
+                    datasets: [{
+                        data: [5, 15, 80],
+                        backgroundColor: ['#1D4ED8', '#60A5FA', '#E5E7EB'],
+                        hoverOffset: 4
+                    }]
+                }
+            }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarNav = document.getElementById('sidebar-nav');
+            const contentContainer = document.getElementById('content-container');
+
+            reportData.forEach((item, index) => {
+                // Create navigation link
+                const navLink = document.createElement('a');
+                navLink.href = `#${item.id}`;
+                navLink.textContent = item.title;
+                navLink.className = 'nav-link block px-4 py-2 text-gray-700 rounded-md hover:bg-gray-200';
+                navLink.dataset.index = index;
+                sidebarNav.appendChild(navLink);
+
+                // Create content section
+                const section = document.createElement('section');
+                section.id = item.id;
+                section.className = 'p-6 sm:p-8 bg-white shadow-lg rounded-xl flex flex-col';
+                
+                let chartHTML = '';
+                if (item.chartType === 'diagram') {
+                    chartHTML = item.diagramHTML;
+                } else {
+                    chartHTML = `<div class="chart-container mt-6"><canvas id="chart-${item.id}"></canvas></div>`;
+                }
+
+                section.innerHTML = `
+                    <h2 class="text-2xl font-bold text-gray-900 text-center mb-6">${item.title}</h2>
+                    <p class="mt-2 text-gray-600 text-center max-w-2xl mx-auto">${item.intro}</p>
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mx-auto max-w-4xl">
+                        <div class="bg-blue-50 p-6 rounded-lg text-center">
+                            <h3 class="font-semibold text-lg text-blue-800">Идея</h3>
+                            <p class="mt-2 text-blue-700">${item.idea}</p>
+                        </div>
+                        <div class="bg-green-50 p-6 rounded-lg text-center">
+                            <h3 class="font-semibold text-lg text-green-800">Как это работает</h3>
+                            <p class="mt-2 text-green-700">${item.howItWorks}</p>
+                        </div>
+                        <div class="bg-yellow-50 p-6 rounded-lg text-center">
+                            <h3 class="font-semibold text-lg text-yellow-800">Ценность</h3>
+                            <p class="mt-2 text-yellow-700">${item.value}</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex-1 flex flex-col justify-center w-full">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Визуализация данных</h3>
+                        ${chartHTML}
+                    </div>
+                `;
+                contentContainer.appendChild(section);
+            });
+
+            reportData.forEach(item => {
+                if (item.chartType !== 'diagram') {
+                    const ctx = document.getElementById(`chart-${item.id}`).getContext('2d');
+                    const defaultOptions = {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        if (Array.isArray(label)) {
+                                          return label.join(' ');
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    new Chart(ctx, {
+                        type: item.chartType,
+                        data: item.chartData,
+                        options: { ...defaultOptions, ...item.chartOptions }
+                    });
+                }
+            });
+            
+            // Highlight active link on scroll
+            const sections = document.querySelectorAll('section[id]');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.scrollY >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.href.includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
